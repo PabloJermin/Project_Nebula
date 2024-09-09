@@ -1,0 +1,17 @@
+# ignoring all environment variables
+.env
+venv/
+env/
+
+# ignoring credectial fiiles
+credentials.py
+
+
+# ignoring system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ignoring logs
+.log
