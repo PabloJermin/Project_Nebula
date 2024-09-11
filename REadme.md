@@ -76,4 +76,4 @@ In your browser, select a student whose data already exist in your database. The
 
 ## Credits
 
-A sincere gratitude is extended to my team members who have masively contributed to the success of this project.
+A sincere gratitude is extended to my team members who have masively contributed to the success of this project. And to @ErnAzubi for his contribution to the frontend version of the project.
