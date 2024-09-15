@@ -2,11 +2,13 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import StudSerializers
+from .serializers import StudSerializers, DbSerializer
 from .models import Students
 from django.db import connections
 from django.db.models import Q
 from django.db.utils import OperationalError
+from Nebula import settings
+
 
 
 # Getting all the students
@@ -28,36 +30,36 @@ def create_student(request):
 
 
 # querry a student
-# @api_view(['GET', 'PUT', 'DELETE'])
-# def detail(request, pk):
+@api_view(['GET', 'PUT', 'DELETE'])
+def detail(request, pk):
     
-#     # if student doesn't exist in DB
-#     try:
-#         user = Students.objects.get(pk=pk)
-#     except Students.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
+    # if student doesn't exist in DB
+    try:
+        user = Students.objects.get(pk=pk)
+    except Students.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
     
-#     # getting an existing student
-#     if request.method == "GET":
-#         serialize = StudSerializers(user)
-#         return Response(serialize.data)
+    # getting an existing student
+    if request.method == "GET":
+        serialize = StudSerializers(user)
+        return Response(serialize.data)
     
-#     # creating a new student in DB
-#     elif request.method == "PUT":
-#         serializer = StudSerializers(user, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # creating a new student in DB
+    elif request.method == "PUT":
+        serializer = StudSerializers(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
-#     # deleting a item in db
-#     elif request.method == "DELETE":
-#         user.delete()
-#         return Response(status= status.HTTP_204_NO_CONTENT)
+    # deleting a item in db
+    elif request.method == "DELETE":
+        user.delete()
+        return Response(status= status.HTTP_204_NO_CONTENT)
     
-#     else:
-#         return Response(status=status.HTTP_403_FORBIDDEN)
+    else:
+        return Response(status=status.HTTP_403_FORBIDDEN)
     
 
 # searching a particular student
@@ -123,21 +125,12 @@ def search(request):
             error = {"error":"No student found" }
             return Response(error, status=status.HTTP_404_NOT_FOUND)
         
- 
-
-# testing api health
-@api_view(["GET"])
-def health(request):
-    if request.method == "GET":
-        return Response(status=status.HTTP_200_OK)
-    else:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
     
 
 
 # testing connection to db
 @api_view(["GET"])
-def db_connection(request):
+def health(request):
     db_connect = connections['default']
     try:
         # tries the connection
@@ -149,3 +142,51 @@ def db_connection(request):
  
     except OperationalError:
         return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    
+    
+# testing the health or connection of another database
+@api_view(["POST", "OPTIONS"])
+def db_connections(request):
+    if request.method == "OPTIONS":
+        return Response({"status":"Okay"}, status=status.HTTP_200_OK)
+    
+    if request.method == "POST":
+        serializer = DbSerializer(data=request.data)
+        if serializer.is_valid():
+            engine = serializer.validated_data['engine']
+            name = serializer.validated_data['name']
+            user = serializer.validated_data['user']
+            password = serializer.validated_data['password']
+            host = serializer.validated_data['host']
+            port = serializer.validated_data['port']
+            
+        # add temporary connection to django db
+            temp_db = {
+                'ENGINE' : f'django.db.backends.{engine}', 
+                'NAME' : name,
+                'USER' : user,
+                'PASSWORD' : password,
+                'HOST' : host,
+                'PORT' : port,
+                'OPTIONS' : {
+                }
+                }
+            if not settings.USE_TZ:
+                temp_db['TIME_ZONE'] = settings.TIME_ZONE
+            
+            connections.databases['temp_db'] = temp_db
+        # trying the users database
+            try:
+                db_connect = connections['temp_db']
+                db_connect.cursor()
+                return Response({"message": "connection was successfull"}, status=status.HTTP_200_OK)
+            except OperationalError as e:
+                return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+        
+        # remove the user's database
+            finally:
+                connections.databases.pop('temp_db', None)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
