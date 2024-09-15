@@ -29,7 +29,7 @@ To install the django system, navigate to your Project directory. `cd project-na
     ```
     git clone https://github.com/PabloJermin/Project_Nebula.git 
     ```
-* Now, install the dependenciesand djnago application from the requirements.txt file like this:
+* Now, install the dependencies and django application from the requirements.txt file like this:
     ```
     pip install -r requirements.txt
     ```
