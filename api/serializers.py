@@ -14,4 +14,4 @@ class DbSerializer(serializers.Serializer):
     user = serializers.CharField(max_length=100)
     password = serializers.CharField(max_length=100, write_only=True, required=False)
     host = serializers.CharField(max_length=100, required=False, default='localhost')
-    port = serializers.CharField(max_length=10, required=False, default='5432') 
+    port = serializers.IntegerField() 

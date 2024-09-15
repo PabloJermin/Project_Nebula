@@ -146,47 +146,71 @@ def health(request):
     
     
 # testing the health or connection of another database
-@api_view(["POST", "OPTIONS"])
-def db_connections(request):
-    if request.method == "OPTIONS":
-        return Response({"status":"Okay"}, status=status.HTTP_200_OK)
+# @api_view(["POST", "OPTIONS"])
+# def db_connections(request):
+#     if request.method == "OPTIONS":
+#         return Response({"status":"Okay"}, status=status.HTTP_200_OK)
     
-    if request.method == "POST":
-        serializer = DbSerializer(data=request.data)
-        if serializer.is_valid():
-            engine = serializer.validated_data['engine']
-            name = serializer.validated_data['name']
-            user = serializer.validated_data['user']
-            password = serializer.validated_data['password']
-            host = serializer.validated_data['host']
-            port = serializer.validated_data['port']
+#     if request.method == "POST":
+#         serializer = DbSerializer(data=request.data)
+#         if serializer.is_valid():
+#             engine = serializer.validated_data['engine']
+#             name = serializer.validated_data['name']
+#             user = serializer.validated_data['user']
+#             password = serializer.validated_data['password']
+#             host = serializer.validated_data['host']
+#             port = serializer.validated_data['port']
             
-        # add temporary connection to django db
-            temp_db = {
-                'ENGINE' : f'django.db.backends.{engine}', 
-                'NAME' : name,
-                'USER' : user,
-                'PASSWORD' : password,
-                'HOST' : host,
-                'PORT' : port,
-                'OPTIONS' : {
-                }
-                }
-            if not settings.USE_TZ:
-                temp_db['TIME_ZONE'] = settings.TIME_ZONE
+#         # add temporary connection to django db
+#             temp_db = {
+#                 'ENGINE' : f'django.db.backends.{engine}', 
+#                 'NAME' : name,
+#                 'USER' : user,
+#                 'PASSWORD' : password,
+#                 'HOST' : host,
+#                 'PORT' : port,
+#                 'OPTIONS' : {
+#                 }
+#                 }
+#             # if not settings.USE_TZ:
+#             #     temp_db['TIME_ZONE'] = settings.TIME_ZONE
             
-            connections.databases['temp_db'] = temp_db
-        # trying the users database
-            try:
-                db_connect = connections['temp_db']
-                db_connect.cursor()
-                return Response({"message": "connection was successfull"}, status=status.HTTP_200_OK)
-            except OperationalError as e:
-                return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+#             connections.databases['temp_db'] = temp_db
+#         # trying the users database
+#             try:
+#                 db_connect = connections['temp_db']
+#                 db_connect.cursor()
+#                 return Response({"message": "connection was successfull"}, status=status.HTTP_200_OK)
+#             except OperationalError as e:
+#                 return Response({"message": str(e)}, status=status.HTTP_404_NOT_FOUND)
         
-        # remove the user's database
-            finally:
-                connections.databases.pop('temp_db', None)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         # remove the user's database
+#             finally:
+#                 connections.databases.pop('temp_db', None)
+#         else:
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
+ 
         
+#Testing the health of a database dynamically inputed by a user 
+@api_view(["POST"])
+def db_connections(request, *args, **kwargs):
+    serializer = DbSerializer(data=request.data)
+    if serializer.is_valid():
+        dbase = serializer.validated_data
+        try:
+            connection = connections['default']
+            connection.settings_dict.update({
+                'NAME': dbase['name'],
+                'USER': dbase['user'],
+                'PASSWORD': dbase['password'],
+                'ENGINE': dbase['engine'],
+                'HOST': dbase['host'],
+            })
+            
+            with connection.cursor() as cursor:
+                cursor.execute('SELECT 1;')
+            return Response({"status": "Success"}, status=status.HTTP_200_OK)
+        except OperationalError:
+            return Response({"status":"No connection"}, status=status.HTTP_404_NOT_FOUND)
+    return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
