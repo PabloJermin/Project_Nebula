@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from dotenv import load_dotenv
 from pathlib import Path
 import os
 # from . import credentials
@@ -92,16 +93,26 @@ WSGI_APPLICATION = 'Nebula.wsgi.application'
 #     }
 # }
 
-
+load_dotenv()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT')
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT')
     }
+    
+    
+    # 'default': {
+    #     'ENGINE': credentials.DB_ENGINE,
+    #     'NAME': credentials.DB_NAME,
+    #     'USER': credentials.DB_USER,
+    #     'PASSWORD': credentials.DB_PASSWORD,
+    #     'HOST': credentials.DB_HOST,
+    #     'PORT': credentials.DB_PORT,
+    # }
 }
 
 
@@ -146,3 +157,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
