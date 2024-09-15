@@ -73,9 +73,10 @@ To setup the django backend to interacts with your personal database,
 
 **Now the application is running on your personal database..**
 
-Interact with the application on the localhost of your browser by copying this link into your favorite browser `localhost:8000`.
+Interact with the application on the localhost of your browser by copying this link into your favorite browser `localhost:8000/api`.
 
-In your browser, select a student whose data already exist in your database. The information of the selected student should populate in all the tiles or fields designed on your screen.
+In your browser, navigate to "/students" to display all students in the database. Your browser should look like this
+![Screeonshot of a web broswer showing all students in a databse](<../../../Pictures/Screenshots/Screenshot (69).png>)
 
 
 ## Credits
