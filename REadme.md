@@ -24,27 +24,31 @@ To install the django system, navigate to your Project directory. `cd project-na
     ```
     source venv/bin/activate
     ```
-* Now, install the django and the restframwork application in your environment.
-    ```
-    pip install django
-    pip install djangorestframework
 
-    ```
 * Clone the project from this repository into your directory using this command:
     ```
     git clone https://github.com/PabloJermin/Project_Nebula.git 
     ```
-* Install the dependencies from the requirement file like this:
+* Now, install the dependenciesand djnago application from the requirements.txt file like this:
     ```
     pip install -r requirements.txt
     ```
     all the required dependencies shall be installed in your virtual environment.
+* Create your environment variable at the root of the folder with your database credentials using the format as `.env`
+    ```
+    DB_HOST='your_host_name'
+    DB_PASSWORD='your_pasword'
+    DB_USER='your_username'
+    DB_NAME='your_name'
+    DB_ENGINE='django.db.backends.postgresql'
+    DB_PORT=5432
+    ```
 
 * Finally, run the backend server
     ```
     python manage.py runserver
     ```
-    this runs the server on your `localhost:8000`.
+    this runs the server on your `localhost:8000`. However, ensure your database application is already running before starting the backend application to avoid errors.
 
 **Now your backend is running...**
 
