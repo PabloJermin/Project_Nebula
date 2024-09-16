@@ -104,15 +104,6 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT')
     }
     
-    
-    # 'default': {
-    #     'ENGINE': credentials.DB_ENGINE,
-    #     'NAME': credentials.DB_NAME,
-    #     'USER': credentials.DB_USER,
-    #     'PASSWORD': credentials.DB_PASSWORD,
-    #     'HOST': credentials.DB_HOST,
-    #     'PORT': credentials.DB_PORT,
-    # }
 }
 
 
