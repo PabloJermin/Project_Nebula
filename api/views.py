@@ -134,14 +134,40 @@ def health(request):
     try:
         # tries the connection
         db_connect.cursor()
+        # db_connect.cursor.close()
         data =  {
             "message" : "Connection is successful"
         }
-        return Response(data, status=status.HTTP_302_FOUND)
+        return Response(data, status=status.HTTP_200_OK)
  
     except OperationalError:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+# api_view(["GET"])
+# def health(request):
+#     db_connect = connections['default']
+#     try:
+#         # Tries to establish a connection
+#         cursor = db_connect.cursor()
+#         cursor.close()  # Make sure to close the cursor after use
+
+#         data = {
+#             "message": "Database connection is successful"
+#         }
+#         return Response(data, status=status.HTTP_200_OK)  # Use 200 for success
+
+#     except OperationalError:
+#         data = {
+#             "message": "Database connection failed"
+#         }
+#         return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)  # Use 500 for server errors
+
+#     except Exception as e:
+#         # Catch any unexpected errors and return 500 status
+#         data = {
+#             "message": "An unexpected error occurred",
+#             "error": str(e)
+#         }
+#         return Response(data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     
 # testing the health or connection of another database
@@ -195,6 +221,7 @@ def health(request):
 @api_view(["POST"])
 def db_connections(request, *args, **kwargs):
     serializer = DbSerializer(data=request.data)
+    print(request.data)
     if serializer.is_valid():
         dbase = serializer.validated_data
         try:
@@ -205,11 +232,13 @@ def db_connections(request, *args, **kwargs):
                 'PASSWORD': dbase['password'],
                 'ENGINE': dbase['engine'],
                 'HOST': dbase['host'],
+                'PORT': dbase['port'],
             })
             
             with connection.cursor() as cursor:
                 cursor.execute('SELECT 1;')
             return Response({"status": "Success"}, status=status.HTTP_200_OK)
+
         except OperationalError:
             return Response({"status":"No connection"}, status=status.HTTP_404_NOT_FOUND)
     return Response(serializer.errors, status=status.HTTP_403_FORBIDDEN)
