@@ -7,7 +7,6 @@ from .models import Students
 from django.db import connections
 from django.db.models import Q
 from django.db.utils import OperationalError
-from Nebula import settings
 
 
 
