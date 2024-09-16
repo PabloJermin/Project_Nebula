@@ -9,6 +9,14 @@ COPY requirements.txt /app/
 # Runing an upgrade
 RUN pip install --upgrade pip
 
+# Updating dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libpq-dev \
+    python3-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install packages in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
