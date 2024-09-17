@@ -6,7 +6,26 @@ This project makes use of djnago restframework as an API in conjunction with htm
 
 ## Instalation Process
 
-To install the django system, navigate to your Project directory. `cd project-name` or create the directory using `mkdir project-name`in your favorite code editor or command prompt.
+### Frontend Setup
+The frontend of the apllication runs on react and nodejs. The responsive frontend was designed to receive dynamic information and display results to the dashboard of the user.
+To run the frontend of the application, you can simply run the docker file into a docker image and run it on your local computer.
+Use this code to run the docker file;
+```
+    docker build -t <name_of_image> .
+```
+
+* This builds an image from the docker file with the name provided above. 
+
+* **Tip:** Use `docker images` to check all images avalable on you docker.
+
+* Run the image into a container using the following codes 
+    ```
+    docker run <inamge_name> -d -p 3000:3000
+    ```
+Now your application will be available on localhost:3000.
+
+### Backend Setup
+To install the django backend system, navigate to your Project directory. `cd project-name` or create the directory using `mkdir project-name`in your favorite code editor or command prompt.
 
 * In the project directory, create your environment using this command:
     ```

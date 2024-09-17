@@ -221,7 +221,7 @@ def health(request):
 @api_view(["POST"])
 def db_connections(request, *args, **kwargs):
     serializer = DbSerializer(data=request.data)
-    print(request.data)
+    # print(request.data)
     if serializer.is_valid():
         dbase = serializer.validated_data
         try:
