@@ -2,21 +2,36 @@
 
 In this project seeks to design a dashboard for student. On the dashboard, the user has the ability to select a name from the list of students in the database with the corresponding cohort. When the selected details is correct, the cooresponding details of the student, i.e attendance and scores shall appear on the tiles of the frontend.
 
-This project makes use of djnago restframework as an API in conjunction with html/css or react as a frontend to accept data from a user and save into the AWS Postgres database. The original intention for this project was to utilize the AWS Dynamo DB with the djnago backend, however, due to the short period given for the execution of the project, much time wasn't avalable to explore ways to integrate the django with dynamo db. Also, Django's limitaion on using only relational databases made it easier for me to resort to using the Postgres.
+This project makes use of djnago's restframework as an API in conjunction with react as a frontend to accept data from a user and save into the AWS Postgres database. 
+
+The application shall be hosted on AWS using the AWS Elastic Container Registry to host the images whiles utilizing the Elastic Container Services to run the application's images in AWS Fargate instances.
+
 
 ## Instalation Process
 
 ### Frontend Setup
 The frontend of the apllication runs on react and nodejs. The responsive frontend was designed to receive dynamic information and display results to the dashboard of the user.
 To run the frontend of the application, you can simply run the docker file into a docker image and run it on your local computer.
-Use this code to run the docker file;
+
+Clone the frontend files fron this repository using this command 
 ```
-    docker build -t <name_of_image> .
+git clone https://github.com/PabloJermin/Project_Nebula_Frontend.git
 ```
+Change directory into the cloned folder with this command 
+```
+cd Project_Nebula_Frontend
+```
+
+#### Running As An Image
+* Use this code to run the docker file;
+    ```
+        docker build -t <name_of_image> .
+    ```
 
 * This builds an image from the docker file with the name provided above. 
 
-* **Tip:** Use `docker images` to check all images avalable on you docker.
+    > **NOTE:**
+    >  Use `docker images` to check all images avalable on you docker.
 
 * Run the image into a container using the following codes 
     ```
@@ -24,9 +39,23 @@ Use this code to run the docker file;
     ```
 Now your application will be available on localhost:3000.
 
+#### Ruuning On A Developer Mode
+* In your clone repository, install the `npm` manager using this command
+    ```
+    npm install
+    ```
+
+    > **Note:** 
+    > Make sure Node.js is installed on your local computer.    Follow this [link](https://nodejs.org/en/download/package-manager) to install the Node.js application. 
+* After installing the Node.js application and  the `npm` packages, run this command in your terminal to start the application.
+    ```
+    npm start
+    ```
+
 ### Backend Setup
 To install the django backend system, navigate to your Project directory. `cd project-name` or create the directory using `mkdir project-name`in your favorite code editor or command prompt.
 
+#### Running In Developer Mode
 * In the project directory, create your environment using this command:
     ```
     python virtualenv venv
@@ -52,8 +81,8 @@ To install the django backend system, navigate to your Project directory. `cd pr
     ```
     pip install -r requirements.txt
     ```
-    all the required dependencies shall be installed in your virtual environment.
-* Create your environment variable at the root of the folder with your database credentials using the format as `.env`
+    All the required dependencies shall be installed in your virtual environment.
+* Create your environment variable file at the root of the folder with your database credentials using the format and save as `.env`
     ```
     DB_HOST='your_host_name'
     DB_PASSWORD='your_pasword'
@@ -69,7 +98,23 @@ To install the django backend system, navigate to your Project directory. `cd pr
     ```
     this runs the server on your `localhost:8000`. However, ensure your database application is already running before starting the backend application to avoid errors.
 
-**Now your backend is running...**
+**_Now your backend is running..._**
+
+#### Running As A Container
+
+* Clone the project from this repository into your directory using this command:
+    ```
+    git clone https://github.com/PabloJermin/Project_Nebula.git 
+    ```
+* Change directory into the folder using `cd Project_Nebula`
+
+    > ***NOTE:***
+    > Ensure that the environment variable file `.env` has been created.
+* Now create the image from the dockerfile using this command
+    ```
+    docker-compose up --build
+    ```
+**_Now your backend is running..._**
 
 ## How To Use The Application
 
